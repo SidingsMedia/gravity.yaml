@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2023 Sidings Media
+# SPDX-License-Identifier: MIT
+
+[tool.poetry]
+name = "gravityyaml"
+version = "0.0.0"
+description = "Store your Pi-hole gravity.db configs in a single YAML file"
+authors = ["Sidings Media"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "gravityyaml"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+PyYAML = "^6.0.1"
+
+[tool.poetry.scripts]
+gravityyaml = 'gravityyaml.cli:cli'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
