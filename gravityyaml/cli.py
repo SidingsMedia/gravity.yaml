@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
+import pkg_resources
 import sys
 
 from gravityyaml.gravityyaml import GravityYAML
@@ -13,6 +14,10 @@ EXIT_CODES = {
     "CONFIG_FILE_ERROR": 3,
     "FILE_ERROR": 4,
 }
+
+def version() -> None:
+    """Handle --version flag"""
+    print(pkg_resources.get_distribution('gravityyaml').version)
 
 def cli() -> None:
     """Start the CLI"""
@@ -40,10 +45,20 @@ def cli() -> None:
     parser.add_argument(
         "--debug",
         action="store_true",
-        help="Enable debug mode"
+        help="Enable debug mode",
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="store_true",
+        help="Display current CLI version",
     )
 
     args = parser.parse_args()
+
+    if args.version:
+        version()
+        return
 
     app = GravityYAML(args.config, args.database)
     if args.debug:
