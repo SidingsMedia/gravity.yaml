@@ -4,7 +4,6 @@
 from datetime import datetime
 import pathlib
 import os
-import sqlite3
 
 import yaml
 
@@ -74,7 +73,7 @@ class GravityYAML:
             conn.loadFile(os.path.join(script_path, "database.sql"))
             group_index = {"Default": 0}
 
-            for group in self._data["groups"]:
+            for group in self._data.get("groups", []):
                 group_index[group["name"]] = conn.insert(
                     table="group",
                     columns=("enabled", "name", "description"),
@@ -96,21 +95,81 @@ class GravityYAML:
                     )
                 )
 
-                for group in adlist["groups"]:
+                for group in adlist.get("groups", ["Default"]):
                     try:
                         group_id = group_index[group]
                     except KeyError:
                         print(f"WARNING - Group {group} referenced by adlist {adlist['url']} does not exist")
                         continue
 
-                    if group_id == 0:
-                        # Relationship automatically added for Default
-                        continue
-
                     conn.insert(
                         table="adlist_by_group",
                         columns=("adlist_id", "group_id"),
                         values=(list_id, group_id)
+                    )
+
+            modes = {
+                "ALLOW": 0,
+                "DENY": 1,
+                "ALLOW_PATTERN": 2,
+                "DENY_PATTERN": 3,
+            }
+            for domain in self._data.get("domains", []):
+                if "pattern" in domain.keys():
+                    try:
+                        mode = modes[domain["type"].upper() + "_PATTERN"]
+                    except KeyError:
+                        raise errors.ConfigFileError("Invalid type for domain")
+                else:
+                    try:
+                        mode = modes[domain["type"].upper()]
+                    except KeyError:
+                        raise errors.ConfigFileError("Invalid type for domain")
+                
+                domain_id = conn.insert(
+                    table="domainlist",
+                    columns=("type", "domain", "enabled"),
+                    values=(
+                        mode,
+                        domain.get("pattern", "") if mode in (2,3) else domain["domain"],
+                        domain.get("enabled", True)
+                    )
+                )
+
+                for group in domain.get("groups", ["Default"]):
+                    try:
+                        group_id = group_index[group]
+                    except KeyError:
+                        print(f"WARNING - Group {group} referenced by adlist {domain.get('domain', '') or domain.get('pattern', '')} does not exist")
+                        continue
+
+                    conn.insert(
+                        table="domainlist_by_group",
+                        columns=("domainlist_id", "group_id"),
+                        values=(domain_id, group_id)
+                    )
+
+            for client in self._data.get("clients", []):
+                client_id = conn.insert(
+                    table="client",
+                    columns=("ip", "comment"),
+                    values=(
+                        client["ip"], 
+                        client.get("description", None)
+                    )
+                )
+
+                for group in client.get("groups", ["Default"]):
+                    try:
+                        group_id = group_index[group]
+                    except KeyError:
+                        print(f"WARNING - Group {group} referenced by client {client['ip']} does not exist")
+                        continue
+
+                    conn.insert(
+                        table="client_by_group",
+                        columns=("client_id", "group_id"),
+                        values=(client_id, group_id)
                     )
 
             conn.commit()

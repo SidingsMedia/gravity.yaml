@@ -118,4 +118,3 @@ class Database:
         """Commit changes to database"""
 
         self._connection.commit()
-        

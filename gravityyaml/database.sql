@@ -1,5 +1,11 @@
 -- SPDX-FileCopyrightText: 2017 Pi-hole, LLC <https://pi-hole.net>
 -- SPDX-License-Identifier: EUPL-1.2
+--
+-- Taken from
+-- https://github.com/pi-hole/pi-hole/blob/8495565a6f065f372a8b0c64265ff3cdabe26d4b/advanced/Templates/gravity.db.sql
+--
+-- Modified to remove automatic addition to the default group default
+-- group.
 PRAGMA foreign_keys = OFF;
 BEGIN TRANSACTION;
 CREATE TABLE "group" (
@@ -168,36 +174,12 @@ SELECT DISTINCT address,
 FROM adlist
 WHERE enabled = 1
 ORDER BY id;
-CREATE TRIGGER tr_domainlist_add
-AFTER
-INSERT ON domainlist BEGIN
-INSERT INTO domainlist_by_group (domainlist_id, group_id)
-VALUES (NEW.id, 0);
-END;
-CREATE TRIGGER tr_client_add
-AFTER
-INSERT ON client BEGIN
-INSERT INTO client_by_group (client_id, group_id)
-VALUES (NEW.id, 0);
-END;
-CREATE TRIGGER tr_adlist_add
-AFTER
-INSERT ON adlist BEGIN
-INSERT INTO adlist_by_group (adlist_id, group_id)
-VALUES (NEW.id, 0);
-END;
 CREATE TRIGGER tr_group_update
 AFTER
 UPDATE ON "group" BEGIN
 UPDATE "group"
 SET date_modified = (cast(strftime('%s', 'now') as int))
 WHERE id = NEW.id;
-END;
-CREATE TRIGGER tr_group_zero
-AFTER DELETE ON "group" BEGIN
-INSERT
-    OR IGNORE INTO "group" (id, enabled, name)
-VALUES (0, 1, 'Default');
 END;
 CREATE TRIGGER tr_domainlist_delete
 AFTER DELETE ON domainlist BEGIN
