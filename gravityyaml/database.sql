@@ -1,6 +1,5 @@
 -- SPDX-FileCopyrightText: 2017 Pi-hole, LLC <https://pi-hole.net>
 -- SPDX-License-Identifier: EUPL-1.2
-
 PRAGMA foreign_keys = OFF;
 BEGIN TRANSACTION;
 CREATE TABLE "group" (
