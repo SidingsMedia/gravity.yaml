@@ -47,7 +47,7 @@ class GravityYAML:
         """
 
         if not os.path.isfile(self._yaml_path):
-            raise FileNotFoundError(message="YAML config file could not be found.")
+            raise FileNotFoundError("YAML config file could not be found.")
 
         with open(self._yaml_path, "r") as f:
             self._data = yaml.safe_load(f)
