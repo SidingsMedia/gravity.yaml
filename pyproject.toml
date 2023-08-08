@@ -3,7 +3,7 @@
 
 [tool.poetry]
 name = "gravityyaml"
-version = "0.0.0"
+version = "0.1.0"
 description = "Store your Pi-hole gravity.db configs in a single YAML file"
 authors = ["Sidings Media"]
 license = "MIT"
