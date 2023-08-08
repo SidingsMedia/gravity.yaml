@@ -6,9 +6,16 @@ name = "gravityyaml"
 version = "0.1.0"
 description = "Store your Pi-hole gravity.db configs in a single YAML file"
 authors = ["Sidings Media"]
-license = "MIT"
+license = "MIT AND EUPL-1.2 AND CC0-1.0 AND CC-BY-SA-4.0 AND CC-BY-4.0"
 readme = "README.md"
+homepage = "https://github.com/SidingsMedia/gravity.yaml"
+repository = "https://github.com/SidingsMedia/gravity.yaml"
 packages = [{include = "gravityyaml"}]
+include = [
+    { path = "README.md", format = "sdist" },
+    { path = ".reuse", format = "sdist" },
+    { path = "LICENSES", format = "sdist" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
