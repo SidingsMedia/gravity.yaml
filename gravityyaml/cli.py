@@ -69,6 +69,12 @@ def cli() -> None:
         except errors.DatabaseError as e:
             print(f"FATAL - {e}")
             sys.exit(EXIT_CODES["DATABASE_ERROR"])
+        except errors.ConfigFileError as e:
+            print(f"FATAL - {e}")
+            sys.exit(EXIT_CODES["CONFIG_FILE_ERROR"])
+        except FileExistsError or FileNotFoundError as e:
+            print(f"FATAL - {e}")
+            sys.exit(EXIT_CODES["FILE_ERROR"])
         except Exception as e:
             print(f"FATAL - {e}")
             sys.exit(EXIT_CODES["DEFAULT"])
